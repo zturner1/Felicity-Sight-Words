@@ -3,6 +3,32 @@ import { renderHook, act } from '@testing-library/react';
 import { useLeitner } from '../hooks/useLeitner';
 import { WORDS } from '../data/words';
 
+// Mock data factories
+const createMockWordProgress = (overrides = {}) => ({
+  wordId: 1,
+  box: 0,
+  timesSeen: 0,
+  timesCorrect: 0,
+  timesIncorrect: 0,
+  consecutiveCorrect: 0,
+  sessionsSeenIn: [],
+  lastSeen: null,
+  responseTimes: [],
+  mastered: false,
+  masteredDate: null,
+  creatureId: null,
+  creatureColor: null,
+  ...overrides,
+});
+
+const createMockProgress = (words) => ({
+  progress: words.reduce((acc, word) => {
+    acc[word.wordId] = createMockWordProgress(word);
+    return acc;
+  }, {}),
+  sessionNumber: 1,
+});
+
 describe('useLeitner Hook', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -41,26 +67,18 @@ describe('useLeitner Hook', () => {
     });
 
     it('should load progress from localStorage if available', () => {
-      const mockProgress = {
-        progress: {
-          1: {
-            wordId: 1,
-            box: 2,
-            timesSeen: 5,
-            timesCorrect: 4,
-            timesIncorrect: 1,
-            consecutiveCorrect: 2,
-            sessionsSeenIn: [1, 2],
-            lastSeen: '2026-01-01T00:00:00.000Z',
-            responseTimes: [1000, 1500, 2000, 1200, 1800],
-            mastered: false,
-            masteredDate: null,
-            creatureId: null,
-            creatureColor: null,
-          },
-        },
-        sessionNumber: 3,
-      };
+      const mockProgress = createMockProgress([{
+        wordId: 1,
+        box: 2,
+        timesSeen: 5,
+        timesCorrect: 4,
+        timesIncorrect: 1,
+        consecutiveCorrect: 2,
+        sessionsSeenIn: [1, 2],
+        lastSeen: '2026-01-01T00:00:00.000Z',
+        responseTimes: [1000, 1500, 2000, 1200, 1800],
+      }]);
+      mockProgress.sessionNumber = 3;
       
       localStorage.getItem.mockReturnValue(JSON.stringify(mockProgress));
       
@@ -97,26 +115,18 @@ describe('useLeitner Hook', () => {
     });
 
     it('should return words in box 1 every session', () => {
-      const mockProgress = {
-        progress: {
-          1: {
-            wordId: 1,
-            box: 1,
-            timesSeen: 3,
-            timesCorrect: 2,
-            timesIncorrect: 1,
-            consecutiveCorrect: 1,
-            sessionsSeenIn: [1],
-            lastSeen: '2026-01-01T00:00:00.000Z',
-            responseTimes: [1500, 1800, 1600],
-            mastered: false,
-            masteredDate: null,
-            creatureId: null,
-            creatureColor: null,
-          },
-        },
-        sessionNumber: 2,
-      };
+      const mockProgress = createMockProgress([{
+        wordId: 1,
+        box: 1,
+        timesSeen: 3,
+        timesCorrect: 2,
+        timesIncorrect: 1,
+        consecutiveCorrect: 1,
+        sessionsSeenIn: [1],
+        lastSeen: '2026-01-01T00:00:00.000Z',
+        responseTimes: [1500, 1800, 1600],
+      }]);
+      mockProgress.sessionNumber = 2;
       
       localStorage.getItem.mockReturnValue(JSON.stringify(mockProgress));
       
@@ -129,26 +139,18 @@ describe('useLeitner Hook', () => {
     });
 
     it('should return words in box 2 every 2 sessions', () => {
-      const mockProgress = {
-        progress: {
-          1: {
-            wordId: 1,
-            box: 2,
-            timesSeen: 5,
-            timesCorrect: 5,
-            timesIncorrect: 0,
-            consecutiveCorrect: 2,
-            sessionsSeenIn: [1, 2],
-            lastSeen: '2026-01-01T00:00:00.000Z',
-            responseTimes: [1500, 1800, 1600, 1400, 1700],
-            mastered: false,
-            masteredDate: null,
-            creatureId: null,
-            creatureColor: null,
-          },
-        },
-        sessionNumber: 4,
-      };
+      const mockProgress = createMockProgress([{
+        wordId: 1,
+        box: 2,
+        timesSeen: 5,
+        timesCorrect: 5,
+        timesIncorrect: 0,
+        consecutiveCorrect: 2,
+        sessionsSeenIn: [1, 2],
+        lastSeen: '2026-01-01T00:00:00.000Z',
+        responseTimes: [1500, 1800, 1600, 1400, 1700],
+      }]);
+      mockProgress.sessionNumber = 4;
       
       localStorage.getItem.mockReturnValue(JSON.stringify(mockProgress));
       
@@ -161,41 +163,39 @@ describe('useLeitner Hook', () => {
     });
 
     it('should include some mastered words for maintenance', () => {
-      const mockProgress = {
-        progress: {
-          1: {
-            wordId: 1,
-            box: 4,
-            timesSeen: 10,
-            timesCorrect: 10,
-            timesIncorrect: 0,
-            consecutiveCorrect: 5,
-            sessionsSeenIn: [1, 2, 3, 4],
-            lastSeen: '2026-01-01T00:00:00.000Z',
-            responseTimes: [1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600],
-            mastered: true,
-            masteredDate: '2026-01-01T00:00:00.000Z',
-            creatureId: 'trex',
-            creatureColor: '#84cc16',
-          },
-          2: {
-            wordId: 2,
-            box: 4,
-            timesSeen: 8,
-            timesCorrect: 8,
-            timesIncorrect: 0,
-            consecutiveCorrect: 4,
-            sessionsSeenIn: [1, 2, 3],
-            lastSeen: '2026-01-01T00:00:00.000Z',
-            responseTimes: [1600, 1500, 1400, 1300, 1200, 1100, 1000, 900],
-            mastered: true,
-            masteredDate: '2026-01-01T00:00:00.000Z',
-            creatureId: 'owl',
-            creatureColor: '#a855f7',
-          },
+      const mockProgress = createMockProgress([
+        {
+          wordId: 1,
+          box: 4,
+          timesSeen: 10,
+          timesCorrect: 10,
+          timesIncorrect: 0,
+          consecutiveCorrect: 5,
+          sessionsSeenIn: [1, 2, 3, 4],
+          lastSeen: '2026-01-01T00:00:00.000Z',
+          responseTimes: [1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600],
+          mastered: true,
+          masteredDate: '2026-01-01T00:00:00.000Z',
+          creatureId: 'trex',
+          creatureColor: '#84cc16',
         },
-        sessionNumber: 5,
-      };
+        {
+          wordId: 2,
+          box: 4,
+          timesSeen: 8,
+          timesCorrect: 8,
+          timesIncorrect: 0,
+          consecutiveCorrect: 4,
+          sessionsSeenIn: [1, 2, 3],
+          lastSeen: '2026-01-01T00:00:00.000Z',
+          responseTimes: [1600, 1500, 1400, 1300, 1200, 1100, 1000, 900],
+          mastered: true,
+          masteredDate: '2026-01-01T00:00:00.000Z',
+          creatureId: 'owl',
+          creatureColor: '#a855f7',
+        },
+      ]);
+      mockProgress.sessionNumber = 5;
       
       localStorage.getItem.mockReturnValue(JSON.stringify(mockProgress));
       

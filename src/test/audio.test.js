@@ -106,17 +106,12 @@ describe('Audio Utilities', () => {
   });
 
   describe('speakWord', () => {
-    it('should create audio element with correct path', async () => {
-      const originalBasePath = import.meta.env.BASE_URL;
-      import.meta.env.BASE_URL = '/test-base/';
-      
+    it('should create audio element', async () => {
       await speakWord('the', 0.8);
       
       expect(global.Audio).toHaveBeenCalledWith(
         expect.stringContaining('the.mp3')
       );
-      
-      import.meta.env.BASE_URL = originalBasePath;
     });
 
     it('should convert word to lowercase for audio file', async () => {
