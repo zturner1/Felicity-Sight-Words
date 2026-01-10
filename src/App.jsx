@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useLeitner } from './hooks/useLeitner';
 import Garden from './components/Garden';
 import Session from './components/Session';
+import MatchingGame from './components/MatchingGame';
 
 // App screens
 const SCREENS = {
   GARDEN: 'garden',
   SESSION: 'session',
+  MATCHING: 'matching',
 };
 
 function App() {
@@ -51,6 +53,16 @@ function App() {
     setScreen(SCREENS.GARDEN);
   };
 
+  // Start matching game
+  const handleStartMatching = () => {
+    setScreen(SCREENS.MATCHING);
+  };
+
+  // Exit matching game
+  const handleExitMatching = () => {
+    setScreen(SCREENS.GARDEN);
+  };
+
   // Render current screen
   return (
     <div className="min-h-screen font-['Nunito']">
@@ -58,6 +70,14 @@ function App() {
         <Garden
           progress={progress}
           onStartSession={handleStartSession}
+          onStartMatching={handleStartMatching}
+        />
+      )}
+
+      {screen === SCREENS.MATCHING && (
+        <MatchingGame
+          progress={progress}
+          onExit={handleExitMatching}
         />
       )}
       

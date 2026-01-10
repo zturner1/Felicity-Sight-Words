@@ -2,7 +2,7 @@ import React from 'react';
 import { WORDS, CREATURES } from '../data/words';
 import Egg from './Egg';
 
-export function Garden({ progress, onStartSession }) {
+export function Garden({ progress, onStartSession, onStartMatching }) {
   const allProgress = Object.values(progress);
   
   // Get stats
@@ -35,8 +35,8 @@ export function Garden({ progress, onStartSession }) {
 
       {/* Main garden area */}
       <main className="flex-1 overflow-auto p-4 sm:p-6">
-        {/* Start session button */}
-        <div className="flex justify-center mb-8">
+        {/* Start session buttons */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
           <button
             onClick={onStartSession}
             className="touch-btn px-8 py-5 sm:px-12 sm:py-6 
@@ -47,6 +47,17 @@ export function Garden({ progress, onStartSession }) {
                        active:scale-95 transition-all"
           >
             🌟 Start Learning! 🌟
+          </button>
+          <button
+            onClick={onStartMatching}
+            className="touch-btn px-8 py-5 sm:px-10 sm:py-6 
+                       bg-gradient-to-b from-purple-500 to-purple-700
+                       text-white text-2xl sm:text-3xl font-bold 
+                       rounded-2xl shadow-xl
+                       hover:from-purple-400 hover:to-purple-600
+                       active:scale-95 transition-all"
+          >
+            🧠 Memory Match
           </button>
         </div>
 
