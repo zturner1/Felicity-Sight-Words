@@ -1,5 +1,6 @@
 import React from 'react';
 import { WORDS, CREATURES } from '../data/words';
+import { speakWord } from '../utils/audio';
 import Egg from './Egg';
 
 export function Garden({ progress, onStartSession, onStartMatching }) {
@@ -78,13 +79,7 @@ export function Garden({ progress, onStartSession, onStartMatching }) {
                     style={{ 
                       filter: `drop-shadow(0 0 8px ${c.creatureColor})`,
                     }}
-                    onClick={() => {
-                      if ('speechSynthesis' in window) {
-                        const utterance = new SpeechSynthesisUtterance(c.word);
-                        utterance.rate = 0.8;
-                        window.speechSynthesis.speak(utterance);
-                      }
-                    }}
+                    onClick={() => speakWord(c.word)}
                   >
                     {c.creature?.emoji || '🦕'}
                   </div>

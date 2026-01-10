@@ -1,16 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { WORDS, PRAISE_PHRASES } from '../data/words';
-
-// Text-to-speech helper
-const speak = (text, rate = 0.8) => {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = rate;
-    utterance.pitch = 1.1;
-    window.speechSynthesis.speak(utterance);
-  }
-};
+import { speakWord, speakPhrase } from '../utils/audio';
 
 function MatchingGame({ progress, onExit }) {
   const [cards, setCards] = useState([]);
@@ -53,7 +43,7 @@ function MatchingGame({ progress, onExit }) {
     if (flipped.length >= 2) return;
 
     const card = cards.find(c => c.id === cardId);
-    speak(card.word);
+    speakWord(card.word);
 
     const newFlipped = [...flipped, cardId];
     setFlipped(newFlipped);
@@ -70,7 +60,7 @@ function MatchingGame({ progress, onExit }) {
         // Match found!
         setTimeout(() => {
           const praise = PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)];
-          speak(praise.replace(/[^\w\s]/g, ''));
+          speakPhrase(praise.replace(/[^\w\s]/g, ''));
           setMatched(prev => [...prev, first, second]);
           setFlipped([]);
           setIsChecking(false);
@@ -89,7 +79,7 @@ function MatchingGame({ progress, onExit }) {
   useEffect(() => {
     if (cards.length > 0 && matched.length === cards.length) {
       setGameComplete(true);
-      speak("Amazing! You found all the matches!");
+      speakPhrase("Amazing! You found all the matches!");
     }
   }, [matched, cards.length]);
 
