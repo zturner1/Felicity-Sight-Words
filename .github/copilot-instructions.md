@@ -13,16 +13,16 @@ A **React 19 + Vite + Tailwind v4** sight words learning app for 6-year-olds. Us
 ### Key Components
 | Component | Purpose |
 |-----------|---------|
-| `App.jsx` | Screen router (`GARDEN` ↔ `SESSION`) |
+| `App.jsx` | Screen router (`GARDEN` ↔ `SESSION`), owns `useLeitner` hook |
 | `Garden.jsx` | Hub showing eggs (in-progress), creatures (mastered), start button |
 | `Session.jsx` | Learning session with 3 phases: warmup → main → cooldown |
-| `WordCard.jsx` | Self-report mode ("Got it!" / "Help me") with TTS and phonics overlay |
-| `WordChoice.jsx` | Tap-to-select mode (4 options) - used for new words and Box 1 |
-| `Egg.jsx` | Visual egg with crack progression (Box 1-4) + `HatchingAnimation` overlay |
+| `WordCard.jsx` | Self-report mode ("Got it!" / "Help me") with TTS + phonics hints |
+| `WordChoice` | Tap-to-select from 4 options (export from `WordCard.jsx`) |
+| `Egg.jsx` | Visual egg with crack progression (Box 1-4) + `HatchingAnimation` |
 
 ### Interaction Modes
 - **WordChoice**: For `isNew` or `box <= 1` words - child taps correct word from 4 options
-- **WordCard**: For `box >= 2` words - child self-reports with "Got it!" or "Help me" buttons
+- **WordCard**: For `box >= 2` words - child self-reports with "Got it!" or "Help me"
 
 ### Leitner Spaced Repetition System
 ```
@@ -41,12 +41,6 @@ npm run build    # Production build (outputs to dist/)
 npm run preview  # Preview production build locally
 ```
 
-## Deployment
-Configured for GitHub Pages in `vite.config.js`:
-```javascript
-base: '/felicity-sight-words/'
-```
-
 ## Key Conventions
 
 ### Word Data Structure
@@ -58,14 +52,13 @@ Each word in `words.js` follows this pattern - preserve structure when adding wo
 ```
 
 ### Styling Patterns
-- **Tailwind v4** with `@import "tailwindcss"` (no `@tailwind` directives)
-- **Custom color tokens** in `tailwind.config.js`: `garden-*`, `egg-*`, `dino-*`
+- **Tailwind v4**: Uses `@import "tailwindcss"` in `index.css` (not `@tailwind` directives)
 - Touch-optimized: use `.touch-btn` class for all interactive elements (48px min)
-- Gradient backgrounds, `backdrop-blur-sm`, `drop-shadow` for depth
+- Visual depth: `backdrop-blur-sm`, `drop-shadow-lg`, gradient backgrounds
 - Custom animations in `index.css`: `animate-wobble`, `animate-glow`, `animate-bounce-soft`, `celebrate`
-- Font: **Nunito** (loaded via Google Fonts in `index.html`)
+- Font: **Nunito** (loaded in `index.html` via Google Fonts)
 
-### Text-to-Speech
+### Text-to-Speech Pattern
 ```javascript
 const speak = (text, rate = 0.8) => {
   if ('speechSynthesis' in window) {
@@ -78,24 +71,23 @@ const speak = (text, rate = 0.8) => {
 ```
 
 ### State Persistence
-Progress stored in `localStorage` key `felicity-sight-words-progress`. Structure:
+Progress stored in `localStorage` key `felicity-sight-words-progress`:
 ```javascript
 { progress: { [wordId]: WordProgress }, sessionNumber: number, lastSaved: ISO string }
 ```
 
 ### Session Structure
 Sessions organize words into phases for optimal learning:
-1. **Warmup** (3 mastered words) - Easy wins to build confidence
+1. **Warmup** (up to 3 mastered words) - Easy wins to build confidence
 2. **Main** (learning + new words interleaved) - Core practice
 3. **Cooldown** (2 mastered words) - End on positive note
 
 ## UI/UX Guidelines
 - Target audience: 6-year-olds on touch devices
 - 85% success rate target - warmup with mastered words, end positively
-- Session limit: 10 minutes max, 15 words max
+- Session limit: 10 minutes max, 15 words max (3 new max)
 - Immediate audio+visual feedback on all interactions
 - Large text (5xl-7xl), high contrast, emoji-rich
-- Mobile-first: `user-scalable=no`, tap highlight disabled
 
 ## Adding New Features
 - **New words**: Add to `WORDS` array in `words.js` with phonics data
