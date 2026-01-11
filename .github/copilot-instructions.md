@@ -5,7 +5,11 @@ React 19 + Vite + Tailwind v4 sight words app for 6-year-olds. Gamified Leitner 
 
 ## Architecture
 
-### Core Data Flow
+### Data Flow
+1. **Words** (`src/data/words.js`) - Static Fry 50 high-frequency words with Heart Word phonics metadata
+2. **Progress** (`useLeitner` hook) - Per-word learning state persisted to `localStorage`
+3. **Session** - Selects due words via Leitner box intervals, tracks correct/incorrect, triggers mastery
+
 ```
 words.js (static) → useLeitner hook (state + localStorage) → App (router) → Garden/Session
 ```
@@ -13,6 +17,20 @@ words.js (static) → useLeitner hook (state + localStorage) → App (router) �
 - **`App.jsx`**: Two-screen router (`GARDEN` ↔ `SESSION`)
 - **`useLeitner.js`**: All learning logic - box progression, mastery checks, session word selection
 - **`words.js`**: Fry 50 words with phonics metadata (`WORDS`, `CREATURES`, phrase arrays)
+
+### Key Components
+| Component | Purpose |
+|-----------|---------|
+| `App.jsx` | Screen router (`GARDEN` ↔ `SESSION`), owns `useLeitner` hook |
+| `Garden.jsx` | Hub showing eggs (in-progress), creatures (mastered), start button |
+| `Session.jsx` | Learning session with 3 phases: warmup → main → cooldown |
+| `WordCard.jsx` | Self-report mode ("Got it!" / "Help me") with TTS + phonics hints |
+| `WordChoice` | Tap-to-select from 4 options (export from `WordCard.jsx`) |
+| `Egg.jsx` | Visual egg with crack progression (Box 1-4) + `HatchingAnimation` |
+
+### Interaction Modes
+- **WordChoice**: For `isNew` or `box <= 1` words - child taps correct word from 4 options
+- **WordCard**: For `box >= 2` words - child self-reports with "Got it!" or "Help me"
 
 ### Leitner Box System (in `useLeitner.js`)
 ```
@@ -64,8 +82,15 @@ localStorage key: `felicity-sight-words-progress`
 { progress: { [wordId]: WordProgress }, sessionNumber: number, lastSaved: ISO }
 ```
 
+### Session Structure
+Sessions organize words into phases for optimal learning:
+1. **Warmup** (up to 3 mastered words) - Easy wins to build confidence
+2. **Main** (learning + new words interleaved) - Core practice
+3. **Cooldown** (2 mastered words) - End on positive note
+
 ## UI/UX Rules
 - **Target**: 6-year-olds on touch devices
+- 85% success rate target - warmup with mastered words, end positively
 - Large text (`text-5xl` to `text-7xl`), high contrast, emoji-rich
 - Immediate audio + visual feedback on all interactions
 - Session limits: 10 min max, 15 words max, 3 new words max per session

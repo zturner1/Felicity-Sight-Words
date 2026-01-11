@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PRAISE_PHRASES, ENCOURAGEMENT_PHRASES } from '../data/words';
+import { speakWord, speakPhrase } from '../utils/audio';
 import Egg from './Egg';
-
-// Text-to-speech helper
-const speak = (text, rate = 0.8) => {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = rate;
-    utterance.pitch = 1.1;
-    window.speechSynthesis.speak(utterance);
-  }
-};
 
 export function WordCard({ word, onAnswer, showPhonics = true }) {
   const [phase, setPhase] = useState('show'); // show, respond, feedback
@@ -26,7 +16,7 @@ export function WordCard({ word, onAnswer, showPhonics = true }) {
     setShowHeartParts(false);
     
     const timer = setTimeout(() => {
-      speak(word.word);
+      speakWord(word.word);
       setStartTime(Date.now());
       setPhase('respond');
     }, 500);
@@ -40,12 +30,12 @@ export function WordCard({ word, onAnswer, showPhonics = true }) {
     if (correct) {
       const praise = PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)];
       setFeedback({ type: 'correct', message: praise });
-      speak(praise.replace(/[^\w\s]/g, ''));
+      speakPhrase(praise.replace(/[^\w\s]/g, ''));
     } else {
       const encourage = ENCOURAGEMENT_PHRASES[Math.floor(Math.random() * ENCOURAGEMENT_PHRASES.length)];
       setFeedback({ type: 'incorrect', message: encourage });
       setShowHeartParts(true);
-      speak(`${encourage} The word is ${word.word}.`);
+      speakPhrase(`${encourage} The word is ${word.word}.`);
     }
 
     setPhase('feedback');
@@ -122,7 +112,7 @@ export function WordCard({ word, onAnswer, showPhonics = true }) {
       {phase === 'respond' && (
         <div className="flex gap-4 sm:gap-8">
           <button
-            onClick={() => speak(word.word)}
+            onClick={() => speakWord(word.word)}
             className="touch-btn w-16 h-16 sm:w-20 sm:h-20 bg-blue-500 text-white text-3xl rounded-full shadow-lg"
             aria-label="Hear word again"
           >
@@ -167,7 +157,7 @@ export function WordChoice({ word, options, onAnswer }) {
   useEffect(() => {
     setSelected(null);
     setFeedback(null);
-    speak(`Touch the word: ${word.word}`);
+    speakPhrase(`Touch the word: ${word.word}`);
     setStartTime(Date.now());
   }, [word.id]);
 
@@ -181,9 +171,9 @@ export function WordChoice({ word, options, onAnswer }) {
     setFeedback(correct ? 'correct' : 'incorrect');
     
     if (correct) {
-      speak(PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)].replace(/[^\w\s]/g, ''));
+      speakPhrase(PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)].replace(/[^\w\s]/g, ''));
     } else {
-      speak(`That's ${option}. The word is ${word.word}.`);
+      speakPhrase(`That's ${option}. The word is ${word.word}.`);
     }
 
     setTimeout(() => {
@@ -200,7 +190,7 @@ export function WordChoice({ word, options, onAnswer }) {
 
       {/* Hear again button */}
       <button
-        onClick={() => speak(word.word)}
+        onClick={() => speakWord(word.word)}
         className="touch-btn w-16 h-16 bg-blue-500 text-white text-3xl rounded-full shadow-lg mb-8"
         aria-label="Hear word again"
       >

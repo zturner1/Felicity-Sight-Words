@@ -1,10 +1,11 @@
 import React from 'react';
 import { WORDS, CREATURES } from '../data/words';
+import { speakWord } from '../utils/audio';
 import Egg from './Egg';
 
-export function Garden({ progress, onStartSession, onStartMemoryMatch }) {
+export function Garden({ progress, onStartSession, onStartMemoryMatch, onStartMatching, onStartSpeed, onStartSentence, onStartBuilder }) {
   const allProgress = Object.values(progress);
-  
+
   // Get stats
   const mastered = allProgress.filter(p => p.mastered);
   const inProgress = allProgress.filter(p => p.box >= 1 && !p.mastered);
@@ -35,29 +36,77 @@ export function Garden({ progress, onStartSession, onStartMemoryMatch }) {
 
       {/* Main garden area */}
       <main className="flex-1 overflow-auto p-4 sm:p-6">
-        {/* Game mode buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+        {/* Main learning button */}
+        <div className="flex justify-center mb-6">
           <button
             onClick={onStartSession}
-            className="touch-btn px-8 py-5 sm:px-12 sm:py-6 
+            className="touch-btn px-8 py-5 sm:px-12 sm:py-6
                        bg-gradient-to-b from-yellow-400 to-orange-500
-                       text-white text-2xl sm:text-3xl font-bold 
+                       text-white text-2xl sm:text-3xl font-bold
                        rounded-2xl shadow-xl
                        hover:from-yellow-300 hover:to-orange-400
                        active:scale-95 transition-all"
           >
             🌟 Start Learning! 🌟
           </button>
+        </div>
+
+        {/* Game buttons */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 max-w-3xl mx-auto mb-8">
           <button
             onClick={onStartMemoryMatch}
-            className="touch-btn px-8 py-5 sm:px-10 sm:py-6 
+            className="touch-btn py-4 sm:py-5
                        bg-gradient-to-b from-purple-400 to-purple-600
-                       text-white text-2xl sm:text-3xl font-bold 
-                       rounded-2xl shadow-xl
+                       text-white text-lg sm:text-xl font-bold
+                       rounded-xl shadow-lg
                        hover:from-purple-300 hover:to-purple-500
                        active:scale-95 transition-all"
           >
             🧠 Memory Match
+          </button>
+          <button
+            onClick={onStartMatching}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-purple-500 to-purple-700
+                       text-white text-lg sm:text-xl font-bold
+                       rounded-xl shadow-lg
+                       hover:from-purple-400 hover:to-purple-600
+                       active:scale-95 transition-all"
+          >
+            🎯 Matching
+          </button>
+          <button
+            onClick={onStartSpeed}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-blue-500 to-blue-700
+                       text-white text-lg sm:text-xl font-bold
+                       rounded-xl shadow-lg
+                       hover:from-blue-400 hover:to-blue-600
+                       active:scale-95 transition-all"
+          >
+            ⚡ Speed
+          </button>
+          <button
+            onClick={onStartSentence}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-pink-500 to-pink-700
+                       text-white text-lg sm:text-xl font-bold
+                       rounded-xl shadow-lg
+                       hover:from-pink-400 hover:to-pink-600
+                       active:scale-95 transition-all"
+          >
+            📝 Sentences
+          </button>
+          <button
+            onClick={onStartBuilder}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-teal-500 to-teal-700
+                       text-white text-lg sm:text-xl font-bold
+                       rounded-xl shadow-lg
+                       hover:from-teal-400 hover:to-teal-600
+                       active:scale-95 transition-all"
+          >
+            🔤 Builder
           </button>
         </div>
 
@@ -69,22 +118,16 @@ export function Garden({ progress, onStartSession, onStartMemoryMatch }) {
             </h2>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
               {creatures.map((c) => (
-                <div 
+                <div
                   key={c.wordId}
                   className="flex flex-col items-center p-3 bg-white/20 rounded-xl backdrop-blur-sm"
                 >
-                  <div 
+                  <div
                     className="text-4xl sm:text-5xl mb-2 animate-bounce-soft cursor-pointer"
-                    style={{ 
+                    style={{
                       filter: `drop-shadow(0 0 8px ${c.creatureColor})`,
                     }}
-                    onClick={() => {
-                      if ('speechSynthesis' in window) {
-                        const utterance = new SpeechSynthesisUtterance(c.word);
-                        utterance.rate = 0.8;
-                        window.speechSynthesis.speak(utterance);
-                      }
-                    }}
+                    onClick={() => speakWord(c.word)}
                   >
                     {c.creature?.emoji || '🦕'}
                   </div>
@@ -107,7 +150,7 @@ export function Garden({ progress, onStartSession, onStartMemoryMatch }) {
               {inProgress.map((p) => {
                 const word = WORDS.find(w => w.id === p.wordId);
                 return (
-                  <div 
+                  <div
                     key={p.wordId}
                     className="flex flex-col items-center"
                   >
@@ -135,7 +178,7 @@ export function Garden({ progress, onStartSession, onStartMemoryMatch }) {
               {notStarted.slice(0, 20).map((p) => {
                 const word = WORDS.find(w => w.id === p.wordId);
                 return (
-                  <span 
+                  <span
                     key={p.wordId}
                     className="px-3 py-1 bg-white/10 rounded-full text-white/50 text-sm"
                   >
