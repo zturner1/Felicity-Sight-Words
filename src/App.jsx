@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useLeitner } from './hooks/useLeitner';
 import Garden from './components/Garden';
 import Session from './components/Session';
+import MemoryMatch from './components/MemoryMatch';
 
 // App screens
 const SCREENS = {
   GARDEN: 'garden',
   SESSION: 'session',
+  MEMORY_MATCH: 'memory_match',
 };
 
 function App() {
@@ -51,6 +53,16 @@ function App() {
     setScreen(SCREENS.GARDEN);
   };
 
+  // Start memory match game
+  const handleStartMemoryMatch = () => {
+    setScreen(SCREENS.MEMORY_MATCH);
+  };
+
+  // Handle memory match complete
+  const handleMemoryMatchComplete = () => {
+    setScreen(SCREENS.GARDEN);
+  };
+
   // Render current screen
   return (
     <div className="min-h-screen font-['Nunito']">
@@ -58,6 +70,7 @@ function App() {
         <Garden
           progress={progress}
           onStartSession={handleStartSession}
+          onStartMemoryMatch={handleStartMemoryMatch}
         />
       )}
       
@@ -69,6 +82,14 @@ function App() {
           onExit={handleExitSession}
           sessionStats={sessionStats}
           progress={progress}
+        />
+      )}
+
+      {screen === SCREENS.MEMORY_MATCH && (
+        <MemoryMatch
+          progress={progress}
+          onComplete={handleMemoryMatchComplete}
+          onRecordAnswer={recordAnswer}
         />
       )}
     </div>

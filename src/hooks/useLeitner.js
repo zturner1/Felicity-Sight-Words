@@ -136,11 +136,11 @@ export function useLeitner() {
           p.box++;
         }
         
-        // Check for mastery: 3+ consecutive correct across 3+ sessions
+        // Check for mastery: 2+ consecutive correct across 2+ sessions
         const uniqueSessions = new Set(p.sessionsSeenIn).size;
         const avgResponseTime = p.responseTimes.reduce((a, b) => a + b, 0) / p.responseTimes.length;
         
-        if (p.consecutiveCorrect >= 3 && uniqueSessions >= 3 && avgResponseTime < 3000 && !p.mastered) {
+        if (p.consecutiveCorrect >= 2 && uniqueSessions >= 2 && avgResponseTime < 3000 && !p.mastered) {
           p.mastered = true;
           p.masteredDate = now;
           p.box = 4;
