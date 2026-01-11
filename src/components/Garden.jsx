@@ -3,7 +3,7 @@ import { WORDS, CREATURES } from '../data/words';
 import { speakWord } from '../utils/audio';
 import Egg from './Egg';
 
-export function Garden({ progress, onStartSession, onStartMatching }) {
+export function Garden({ progress, onStartSession, onStartMatching, onStartSpeed, onStartSentence, onStartBuilder }) {
   const allProgress = Object.values(progress);
   
   // Get stats
@@ -36,8 +36,8 @@ export function Garden({ progress, onStartSession, onStartMatching }) {
 
       {/* Main garden area */}
       <main className="flex-1 overflow-auto p-4 sm:p-6">
-        {/* Start session buttons */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+        {/* Main learning button */}
+        <div className="flex justify-center mb-6">
           <button
             onClick={onStartSession}
             className="touch-btn px-8 py-5 sm:px-12 sm:py-6 
@@ -49,16 +49,53 @@ export function Garden({ progress, onStartSession, onStartMatching }) {
           >
             🌟 Start Learning! 🌟
           </button>
+        </div>
+
+        {/* Game buttons */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-2xl mx-auto mb-8">
           <button
             onClick={onStartMatching}
-            className="touch-btn px-8 py-5 sm:px-10 sm:py-6 
+            className="touch-btn py-4 sm:py-5
                        bg-gradient-to-b from-purple-500 to-purple-700
-                       text-white text-2xl sm:text-3xl font-bold 
-                       rounded-2xl shadow-xl
+                       text-white text-lg sm:text-xl font-bold 
+                       rounded-xl shadow-lg
                        hover:from-purple-400 hover:to-purple-600
                        active:scale-95 transition-all"
           >
-            🧠 Memory Match
+            🧠 Memory
+          </button>
+          <button
+            onClick={onStartSpeed}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-blue-500 to-blue-700
+                       text-white text-lg sm:text-xl font-bold 
+                       rounded-xl shadow-lg
+                       hover:from-blue-400 hover:to-blue-600
+                       active:scale-95 transition-all"
+          >
+            ⚡ Speed
+          </button>
+          <button
+            onClick={onStartSentence}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-pink-500 to-pink-700
+                       text-white text-lg sm:text-xl font-bold 
+                       rounded-xl shadow-lg
+                       hover:from-pink-400 hover:to-pink-600
+                       active:scale-95 transition-all"
+          >
+            📝 Sentences
+          </button>
+          <button
+            onClick={onStartBuilder}
+            className="touch-btn py-4 sm:py-5
+                       bg-gradient-to-b from-teal-500 to-teal-700
+                       text-white text-lg sm:text-xl font-bold 
+                       rounded-xl shadow-lg
+                       hover:from-teal-400 hover:to-teal-600
+                       active:scale-95 transition-all"
+          >
+            🔤 Builder
           </button>
         </div>
 
